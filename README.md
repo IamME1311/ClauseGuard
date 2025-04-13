@@ -11,7 +11,7 @@ ClauseGuard is a legal AI assistant that helps with legal research and contract 
 
 ## Project Structure
 
-\`\`\`
+```
 clauseguard/
 ├── frontend/                  # Pure HTML/CSS/JS
 │   ├── index.html             # Landing page
@@ -34,26 +34,26 @@ clauseguard/
 │   └── requirements.txt
 └── supabase/                  # SQL migrations
     └── setup.sql
-\`\`\`
+```
 
 ## Local Development
 
 ### Frontend
 
-\`\`\`bash
+```bash
 cd frontend
 python -m http.server 8000
-\`\`\`
+```
 
 Visit `http://localhost:8000` in your browser.
 
 ### Backend
 
-\`\`\`bash
+```bash
 cd backend
 pip install -r requirements.txt
 uvicorn main:app --reload
-\`\`\`
+```
 
 The API will be available at `http://localhost:8000`.
 
@@ -86,10 +86,10 @@ The API will be available at `http://localhost:8000`.
 
 Create a `.env` file in the backend directory with the following variables:
 
-\`\`\`
+```
 SUPABASE_URL=your_supabase_url
 SUPABASE_KEY=your_supabase_api_key
-\`\`\`
+```
 
 ## License
 
