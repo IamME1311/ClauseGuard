@@ -1,8 +1,0 @@
-fastapi==0.95.1
-uvicorn==0.22.0
-httpx==0.24.0
-python-dotenv==1.0.0
-supabase==1.0.3
-llama-index==0.12.32
-llama-index-llms-google-genai==0.1.7
-pydantic==1.10.7
