@@ -1,18 +1,35 @@
-let userConfig = undefined
-try {
-  // try to import ESM first
-  userConfig = await import('./v0-user-next.config.mjs')
-} catch (e) {
-  try {
-    // fallback to CJS import
-    userConfig = await import("./v0-user-next.config");
-  } catch (innerError) {
-    // ignore error
-  }
-}
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: process.env.NEXT_PUBLIC_FASTAPI_URL 
+          ? `${process.env.NEXT_PUBLIC_FASTAPI_URL}/api/:path*` 
+          : '/api/mock/:path*'
+      }
+    ]
+  },
+  webpack: (config) => {
+    // Use dynamic import instead of require
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      'date-fns': new URL('date-fns', import.meta.url).pathname
+    };
+
+    // Keep PDF.js/Tesseract.js compatibility
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      fs: false,
+      path: false,
+      os: false
+    };
+
+    return config;
+  },
+  env: {
+    NEXT_PUBLIC_USE_MOCK_API: process.env.NEXT_PUBLIC_FASTAPI_URL ? 'false' : 'true',
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -26,26 +43,8 @@ const nextConfig = {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
+    typedRoutes: true, // Added for better TypeScript support
   },
-}
+};
 
-if (userConfig) {
-  // ESM imports will have a "default" property
-  const config = userConfig.default || userConfig
-
-  for (const key in config) {
-    if (
-      typeof nextConfig[key] === 'object' &&
-      !Array.isArray(nextConfig[key])
-    ) {
-      nextConfig[key] = {
-        ...nextConfig[key],
-        ...config[key],
-      }
-    } else {
-      nextConfig[key] = config[key]
-    }
-  }
-}
-
-export default nextConfig
+export default nextConfig;

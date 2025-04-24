@@ -1,14 +1,27 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Dict, Any, Optional
 import os
-import httpx
+import re
+import uvicorn
+import json
+import asyncio
 from dotenv import load_dotenv
 
-# Load environment variables
+# Load environment variables only once
 load_dotenv()
+
+# Import LlamaIndex components
+try:
+    from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+    from llama_index.core.agent.workflow import FunctionAgent
+    from llama_index.llms.openai import OpenAI
+    HAS_LLAMA_INDEX = True
+except ImportError:
+    print("Warning: LlamaIndex not available. Legal research functionality will be limited.")
+    HAS_LLAMA_INDEX = False
 
 # Initialize FastAPI app
 app = FastAPI(title="ClauseGuard API")
@@ -23,8 +36,14 @@ app.add_middleware(
 )
 
 # Supabase configuration
+from supabase import create_client, Client
+
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise RuntimeError("Supabase configuration missing. Set SUPABASE_URL and SUPABASE_KEY in your environment.")
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Models
 class User(BaseModel):
@@ -46,42 +65,20 @@ class Precedent(BaseModel):
     year: int
     relevance: float
 
-# Supabase client helper
-async def supabase_request(endpoint: str, method: str = "GET", data: dict = None):
-    url = f"{SUPABASE_URL}{endpoint}"
-    headers = {
-        "apikey": SUPABASE_KEY,
-        "Authorization": f"Bearer {SUPABASE_KEY}",
-        "Content-Type": "application/json"
-    }
-    
-    async with httpx.AsyncClient() as client:
-        if method == "GET":
-            response = await client.get(url, headers=headers)
-        elif method == "POST":
-            response = await client.post(url, headers=headers, json=data)
-        
-        if response.status_code >= 400:
-            raise HTTPException(
-                status_code=response.status_code,
-                detail=response.text
-            )
-        
-        return response.json()
+class ContractRequest(BaseModel):
+    contract_text: str
+
 
 # Auth endpoints
 @app.post("/api/auth/signup", response_model=Token)
 async def signup(user: User):
     try:
         # Call Supabase auth signup
-        data = {
-            "email": user.email,
-            "password": user.password
-        }
-        result = await supabase_request("/auth/v1/signup", "POST", data)
-        
+        response = supabase.auth.sign_up({"email": user.email, "password": user.password})
+        session = response.session
+        access_token = session.access_token if session else ""
         return {
-            "access_token": result.get("access_token", ""),
+            "access_token": access_token,
             "token_type": "bearer"
         }
     except Exception as e:
@@ -94,14 +91,11 @@ async def signup(user: User):
 async def login(user: User):
     try:
         # Call Supabase auth login
-        data = {
-            "email": user.email,
-            "password": user.password
-        }
-        result = await supabase_request("/auth/v1/token?grant_type=password", "POST", data)
-        
+        response = supabase.auth.sign_in_with_password({"email": user.email, "password": user.password})
+        session = response.session
+        access_token = session.access_token if session else ""
         return {
-            "access_token": result.get("access_token", ""),
+            "access_token": access_token,
             "token_type": "bearer"
         }
     except Exception as e:
@@ -143,7 +137,7 @@ async def search_precedents(q: str):
     ]
 
 @app.post("/api/contract-analysis")
-async def analyze_contract(contract_text: str):
+async def analyze_contract(request: ContractRequest):
     # Mock contract analysis
     return {
         "risk_score": 65,
