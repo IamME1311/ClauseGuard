@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - ClauseGuard</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <a href="/" class="logo">ClauseGuard</a>
+      <button id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/auth/login.html" class="nav-link active">Login</a>
+        <a href="/auth/signup.html" class="nav-link">Sign Up</a>
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <i class="fas fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Login Form -->
+  <div class="container" style="min-height: calc(100vh - 200px); display: flex; align-items: center; justify-content: center;">
+    <div class="card" style="width: 100%; max-width: 400px;">
+      <h1 style="font-size: 1.75rem; text-align: center; margin-bottom: 2rem;">Log in to ClauseGuard</h1>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <div class="form-input-wrapper">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" id="email" class="form-input with-icon" placeholder="Enter your email" required>
+          </div>
+          <div class="invalid-feedback" id="email-error"></div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <div class="form-input-wrapper">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" id="password" class="form-input with-icon" placeholder="Enter your password" required>
+            <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div class="invalid-feedback" id="password-error"></div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div class="checkbox-wrapper">
+            <input type="checkbox" id="remember-me" class="styled-checkbox">
+            <label for="remember-me">Remember me</label>
+          </div>
+          <a href="#" style="color: var(--accent-teal); text-decoration: none; font-size: 0.875rem;">Forgot password?</a>
+        </div>
+        
+        <button type="submit" id="login-button" class="btn-primary w-full">
+          <i class="fas fa-sign-in-alt"></i> Log In
+        </button>
+        
+        <div id="login-error" class="alert-error mt-4" style="display: none;"></div>
+      </form>
+      
+      <div style="text-align: center; margin-top: 2rem;">
+        <p>Don't have an account? <a href="/auth/signup.html" style="color: var(--accent-teal); text-decoration: none;">Sign up</a></p>
+      </div>
+    </div>
+  </div>
+  
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navigation.js"></script>
+  <script src="/js/theme.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loginForm = document.getElementById('login-form');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const loginButton = document.getElementById('login-button');
+      const loginError = document.getElementById('login-error');
+      const emailError = document.getElementById('email-error');
+      const passwordError = document.getElementById('password-error');
+      const passwordToggle = document.querySelector('.password-toggle');
+      
+      // Toggle password visibility
+      passwordToggle.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        passwordToggle.querySelector('i').className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+      });
+      
+      // Form validation
+      function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+      
+      function validatePassword(password) {
+        return password.length >= 6;
+      }
+      
+      emailInput.addEventListener('blur', () => {
+        if (!emailInput.value) {
+          emailError.textContent = 'Email is required';
+          emailInput.classList.add('is-invalid');
+        } else if (!validateEmail(emailInput.value)) {
+          emailError.textContent = 'Please enter a valid email address';
+          emailInput.classList.add('is-invalid');
+        } else {
+          emailError.textContent = '';
+          emailInput.classList.remove('is-invalid');
+        }
+      });
+      
+      passwordInput.addEventListener('blur', () => {
+        if (!passwordInput.value) {
+          passwordError.textContent = 'Password is required';
+          passwordInput.classList.add('is-invalid');
+        } else if (!validatePassword(passwordInput.value)) {
+          passwordError.textContent = 'Password must be at least 6 characters';
+          passwordInput.classList.add('is-invalid');
+        } else {
+          passwordError.textContent = '';
+          passwordInput.classList.remove('is-invalid');
+        }
+      });
+      
+      // Handle form submission
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Reset errors
+        emailError.textContent = '';
+        passwordError.textContent = '';
+        loginError.style.display = 'none';
+        emailInput.classList.remove('is-invalid');
+        passwordInput.classList.remove('is-invalid');
+        
+        // Validate inputs
+        let isValid = true;
+        
+        if (!emailInput.value) {
+          emailError.textContent = 'Email is required';
+          emailInput.classList.add('is-invalid');
+          isValid = false;
+        } else if (!validateEmail(emailInput.value)) {
+          emailError.textContent = 'Please enter a valid email address';
+          emailInput.classList.add('is-invalid');
+          isValid = false;
+        }
+        
+        if (!passwordInput.value) {
+          passwordError.textContent = 'Password is required';
+          passwordInput.classList.add('is-invalid');
+          isValid = false;
+        } else if (!validatePassword(passwordInput.value)) {
+          passwordError.textContent = 'Password must be at least 6 characters';
+          passwordInput.classList.add('is-invalid');
+          isValid = false;
+        }
+        
+        if (!isValid) {
+          return;
+        }
+        
+        // Show loading state
+        loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        loginButton.disabled = true;
+        
+        try {
+          const result = await ClauseGuardAuth.login(emailInput.value, passwordInput.value);
+          
+          if (result.success) {
+            // Redirect to dashboard
+            window.location.href = '/dashboard/index.html';
+          } else {
+            // Show error
+            loginError.textContent = result.message || 'Invalid email or password';
+            loginError.style.display = 'block';
+            loginButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log In';
+            loginButton.disabled = false;
+          }
+        } catch (error) {
+          loginError.textContent = error.message || 'An error occurred. Please try again.';
+          loginError.style.display = 'block';
+          loginButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log In';
+          loginButton.disabled = false;
+        }
+      });
+    });
+  </script>
+  
+  <style>
+    .form-input-wrapper {
+      position: relative;
+    }
+    
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-medium);
+    }
+    
+    .form-input.with-icon {
+      padding-left: 2.5rem;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--gray-medium);
+      cursor: pointer;
+    }
+    
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+    }
+    
+    .styled-checkbox {
+      margin-right: 0.5rem;
+    }
+    
+    .alert-error {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      padding: 0.75rem;
+      border-radius: 0.25rem;
+      border-left: 3px solid var(--danger);
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,31 @@
+# United States IT Law Overview
+
+## Computer Fraud and Abuse Act (CFAA)
+The Computer Fraud and Abuse Act (CFAA) is a United States cybersecurity bill that was enacted in 1986 as an amendment to existing computer fraud law. The act prohibits accessing a computer without authorization, or in excess of authorization. The CFAA has been amended several times, most recently in 2008, to address the growing concerns of cybersecurity in the digital age.
+
+## Digital Millennium Copyright Act (DMCA)
+The Digital Millennium Copyright Act (DMCA) is a 1998 United States copyright law that implements two 1996 treaties of the World Intellectual Property Organization (WIPO). It criminalizes production and dissemination of technology, devices, or services intended to circumvent measures that control access to copyrighted works. It also criminalizes the act of circumventing an access control, whether or not there is actual infringement of copyright itself.
+
+## Electronic Communications Privacy Act (ECPA)
+The Electronic Communications Privacy Act (ECPA) of 1986 was enacted by the United States Congress to extend government restrictions on wire taps from telephone calls to include transmissions of electronic data by computer. The ECPA was amended by the Communications Assistance for Law Enforcement Act (CALEA) of 1994, the USA PATRIOT Act (2001), and the FISA Amendments Act (2008).
+
+## Health Insurance Portability and Accountability Act (HIPAA)
+The Health Insurance Portability and Accountability Act of 1996 (HIPAA) includes provisions for protecting the security and privacy of individually identifiable health information. The HIPAA Privacy Rule establishes national standards to protect individuals' medical records and other personal health information. The HIPAA Security Rule establishes national standards to protect individuals' electronic personal health information that is created, received, used, or maintained by a covered entity.
+
+## Children's Online Privacy Protection Act (COPPA)
+The Children's Online Privacy Protection Act of 1998 (COPPA) is a United States federal law that imposes certain requirements on operators of websites or online services directed to children under 13 years of age, and on operators of other websites or online services that have actual knowledge that they are collecting personal information online from a child under 13 years of age.
+
+## Gramm-Leach-Bliley Act (GLBA)
+The Gramm-Leach-Bliley Act (GLBA), also known as the Financial Services Modernization Act of 1999, requires financial institutions to explain their information-sharing practices to their customers and to safeguard sensitive data. The GLBA contains three principal parts: the Financial Privacy Rule, the Safeguards Rule, and the Pretexting provisions.
+
+## Federal Information Security Management Act (FISMA)
+The Federal Information Security Management Act of 2002 (FISMA) is a United States federal law that requires federal agencies to develop, document, and implement an information security and protection program. FISMA was enacted as Title III of the E-Government Act of 2002.
+
+## Sarbanes-Oxley Act (SOX)
+The Sarbanes-Oxley Act of 2002 (SOX) is a United States federal law that set new or expanded requirements for all U.S. public company boards, management, and public accounting firms. The act contains provisions related to corporate governance, internal control assessment, and enhanced financial disclosure.
+
+## CAN-SPAM Act
+The CAN-SPAM Act of 2003 establishes requirements for those who send commercial email, spells out penalties for spammers and companies whose products are advertised in spam if they violate the law, and gives consumers the right to ask emailers to stop spamming them.
+
+## Cybersecurity Information Sharing Act (CISA)
+The Cybersecurity Information Sharing Act (CISA) is a United States federal law designed to "improve cybersecurity in the United States through enhanced sharing of information about cybersecurity threats, and for other purposes." The law allows the sharing of Internet traffic information between the U.S. government and technology and manufacturing companies.
