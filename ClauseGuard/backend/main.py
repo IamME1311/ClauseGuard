@@ -46,6 +46,17 @@ if not SUPABASE_URL or not SUPABASE_KEY:
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Models
+class SearchQuery(BaseModel):
+    query: str
+
+class ContractAnalysisRequest(BaseModel):
+    text: str
+
+class ContractAnalysisResponse(BaseModel):
+    risk_score: int
+    issues: List[Dict[str, Any]]
+    recommendations: List[str]
+
 class User(BaseModel):
     email: str
     password: str
@@ -68,6 +79,21 @@ class Precedent(BaseModel):
 class ContractRequest(BaseModel):
     contract_text: str
 
+
+# Authentication dependency
+async def get_current_user(authorization: Optional[str] = None):
+    from fastapi import Header
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    try:
+        token = authorization.split("Bearer ")[1]
+        response = supabase.auth.get_user(token)
+        user = response.user
+        if not user:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        return user
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Authentication error: {str(e)}")
 
 # Auth endpoints
 @app.post("/api/auth/signup", response_model=Token)
@@ -105,6 +131,88 @@ async def login(user: User):
         )
 
 # Legal research endpoints
+
+@app.post("/api/search")
+async def search_precedents(query: SearchQuery, user = Depends(get_current_user)):
+    try:
+        supabase.table("user_searches").insert({
+            "user_id": user.id,
+            "query": query.query
+        }).execute()
+        response = supabase.table("precedents").select("*").execute()
+        precedents = response.data
+        results = []
+        for precedent in precedents:
+            searchable_text = f"{precedent['title']} {precedent['summary']} {precedent['content']}".lower()
+            if query.query.lower() in searchable_text:
+                title_match = query.query.lower() in precedent['title'].lower()
+                summary_match = query.query.lower() in precedent['summary'].lower()
+                relevance = 0.5
+                if title_match:
+                    relevance += 0.3
+                if summary_match:
+                    relevance += 0.2
+                precedent["relevance"] = relevance
+                results.append(precedent)
+        return results
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error searching precedents: {str(e)}")
+
+@app.post("/api/analyze-contract", response_model=ContractAnalysisResponse)
+async def analyze_contract(request: ContractAnalysisRequest, user = Depends(get_current_user)):
+    try:
+        analysis = {
+            "risk_score": 65,
+            "issues": [
+                {
+                    "clause": "Termination (Section 7)",
+                    "severity": "high",
+                    "issue": "The termination clause allows either party to terminate with only 30 days notice, which may not provide sufficient time to transition services."
+                },
+                {
+                    "clause": "Limitation of Liability (Section 6)",
+                    "severity": "medium",
+                    "issue": "The limitation of liability clause excludes all indirect damages, which may limit your ability to recover certain types of losses."
+                },
+                {
+                    "clause": "Intellectual Property (Section 5)",
+                    "severity": "low",
+                    "issue": "The intellectual property clause grants all rights to the Company, which may be broader than necessary."
+                }
+            ],
+            "recommendations": [
+                "Negotiate a longer notice period for termination, such as 60 or 90 days.",
+                "Modify the limitation of liability clause to allow for recovery of certain indirect damages.",
+                "Consider narrowing the intellectual property assignment to only work product directly related to the services."
+            ]
+        }
+        supabase.table("user_contracts").insert({
+            "user_id": user.id,
+            "title": "Contract Analysis",
+            "content": request.text[:100] + "...",
+            "risk_score": analysis["risk_score"],
+            "analysis": json.dumps(analysis)
+        }).execute()
+        return analysis
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error analyzing contract: {str(e)}")
+
+@app.get("/api/user/searches")
+async def get_user_searches(user = Depends(get_current_user)):
+    try:
+        response = supabase.table("user_searches").select("*").eq("user_id", user.id).order("created_at", desc=True).execute()
+        return response.data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting user searches: {str(e)}")
+
+@app.get("/api/user/contracts")
+async def get_user_contracts(user = Depends(get_current_user)):
+    try:
+        response = supabase.table("user_contracts").select("*").eq("user_id", user.id).order("created_at", desc=True).execute()
+        return response.data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting user contracts: {str(e)}")
+
 @app.get("/api/precedents", response_model=List[Precedent])
 async def search_precedents(q: str):
     # For now, return mock data

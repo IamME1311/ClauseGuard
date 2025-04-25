@@ -11,8 +11,36 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
+  primary: {
+    DEFAULT: '#6366f1', // indigo-500
+    light: '#a5b4fc', // indigo-300
+    dark: '#4338ca', // indigo-700
+    hsl: 'hsl(var(--primary))',
+    foreground: 'hsl(var(--primary-foreground))'
+  },
+  secondary: {
+    DEFAULT: '#f472b6', // pink-400
+    light: '#fbcfe8', // pink-200
+    dark: '#be185d', // pink-800
+    hsl: 'hsl(var(--secondary))',
+    foreground: 'hsl(var(--secondary-foreground))'
+  },
+  accent: {
+    DEFAULT: '#34d399', // emerald-400
+    light: '#6ee7b7', // emerald-300
+    dark: '#059669', // emerald-700
+    hsl: 'hsl(var(--accent))',
+    foreground: 'hsl(var(--accent-foreground))'
+  },
+  gradientStart: '#6366f1',
+  gradientEnd: '#f472b6',
+  background: {
+    DEFAULT: 'hsl(var(--background))',
+    foreground: 'hsl(var(--foreground))'
+  },
+  foreground: {
+    DEFAULT: 'hsl(var(--foreground))'
+  },
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
@@ -21,26 +49,14 @@ const config: Config = {
   				DEFAULT: 'hsl(var(--popover))',
   				foreground: 'hsl(var(--popover-foreground))'
   			},
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
   			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
-  			},
+				DEFAULT: 'hsl(var(--muted))',
+				foreground: 'hsl(var(--muted-foreground))'
+			},
+			destructive: {
+				DEFAULT: 'hsl(var(--destructive))',
+				foreground: 'hsl(var(--destructive-foreground))'
+			},
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',

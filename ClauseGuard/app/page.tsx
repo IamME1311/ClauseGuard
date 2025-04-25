@@ -1,22 +1,30 @@
-<<<<<<< HEAD
 "use client"
 
-import  from "../frontend/js/theme"
-
-export default function SyntheticV0PageForDeployment() {
-  return < />
-}
-=======
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import ThemeToggle from "@/components/theme-toggle"
-import { FileText, Search, Shield } from "lucide-react"
+import { FileText, Search, Shield, Menu, X } from "lucide-react"
+import HeroSection from "./sections/HeroSection"
+import FeaturesSection from "./sections/FeaturesSection"
+import AIServicesSection from "./sections/AIServicesSection"
+import PricingSection from "./sections/PricingSection"
+import CTASection from "./sections/CTASection"
+import FAQSection from "./sections/FAQSection"
+import Footer from "./components/Footer"
+
+import { useState } from "react";
 
 export default function HomePage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <div className="flex min-h-screen flex-col">
+      {/* Overlay Button moved to bottom left */}
+      <div className="fixed bottom-4 left-4 z-50">
+        
+      </div>
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center justify-between">
+          {/* Desktop Nav */}
           <div className="mr-4 hidden md:flex">
             <Link href="/" className="mr-6 flex items-center space-x-2">
               <span className="font-bold">ClauseGuard</span>
@@ -33,101 +41,73 @@ export default function HomePage() {
               </Link>
             </nav>
           </div>
+          {/* Mobile Menu Button */}
+          <div className="flex md:hidden">
+            <button
+              aria-label="Open menu"
+              className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              onClick={() => setMobileMenuOpen(true)}
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+          </div>
           <div className="flex flex-1 items-center justify-end space-x-4">
             <nav className="flex items-center space-x-2">
               <ThemeToggle />
               <Button variant="outline" asChild>
                 <Link href="/auth/login">Login</Link>
               </Button>
-              <Button asChild>
-                <Link href="/auth/signup">Sign Up</Link>
-              </Button>
             </nav>
           </div>
+          
         </div>
+        {/* Mobile Nav Drawer */}
+        {mobileMenuOpen && (
+          <div className="fixed inset-0 z-50 bg-black/50 flex md:hidden" onClick={() => setMobileMenuOpen(false)}>
+            <div
+              className="bg-background w-3/4 max-w-xs h-full shadow-lg p-6 flex flex-col gap-8"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-8">
+                <Link href="/" className="font-bold text-lg" onClick={() => setMobileMenuOpen(false)}>
+                  ClauseGuard
+                </Link>
+                <button
+                  aria-label="Close menu"
+                  className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              <nav className="flex flex-col gap-4 text-base font-medium">
+                <Link href="/" onClick={() => setMobileMenuOpen(false)} className="py-2 px-3 rounded hover:bg-primary/10 transition">
+                  Home
+                </Link>
+                <Link href="#features" onClick={() => setMobileMenuOpen(false)} className="py-2 px-3 rounded hover:bg-primary/10 transition">
+                  Features
+                </Link>
+                <Link href="#pricing" onClick={() => setMobileMenuOpen(false)} className="py-2 px-3 rounded hover:bg-primary/10 transition">
+                  Pricing
+                </Link>
+                <Link href="#faq" onClick={() => setMobileMenuOpen(false)} className="py-2 px-3 rounded hover:bg-primary/10 transition">
+                  FAQ
+                </Link>
+                <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)} className="mt-4 py-2 px-3 rounded hover:bg-primary/10 transition">
+                  Login
+                </Link>
+              </nav>
+            </div>
+          </div>
+        )}
       </header>
-      <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
-          <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-2">
-              <div className="flex flex-col justify-center space-y-4">
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                    AI-Powered Legal Contract Analysis
-                  </h1>
-                  <p className="max-w-[600px] text-slate-500 dark:text-slate-400 md:text-xl">
-                    ClauseGuard helps legal professionals and businesses analyze contracts faster and more accurately
-                    with advanced AI.
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button size="lg" asChild>
-                    <Link href="/auth/signup">Get Started</Link>
-                  </Button>
-                  <Button size="lg" variant="outline" asChild>
-                    <Link href="#features">Learn More</Link>
-                  </Button>
-                </div>
-              </div>
-              <div className="hidden lg:block">
-                <div className="relative h-full w-full">
-                  <div className="bg-muted rounded-lg p-8 h-full flex items-center justify-center">
-                    <div className="text-4xl font-bold">ClauseGuard</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-slate-50 dark:bg-slate-900">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">Key Features</h2>
-                <p className="max-w-[900px] text-slate-500 dark:text-slate-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  ClauseGuard uses advanced AI to help you analyze legal contracts quickly and accurately.
-                </p>
-              </div>
-            </div>
-            <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mt-8">
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-4">
-                <div className="rounded-full bg-primary p-2 text-primary-foreground">
-                  <FileText className="h-6 w-6" />
-                </div>
-                <h3 className="text-xl font-bold">Contract Analysis</h3>
-                <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-                  Extract key clauses, identify risks, and get summaries of legal documents.
-                </p>
-              </div>
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-4">
-                <div className="rounded-full bg-primary p-2 text-primary-foreground">
-                  <Search className="h-6 w-6" />
-                </div>
-                <h3 className="text-xl font-bold">Legal Research</h3>
-                <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-                  Research legal topics and precedents to strengthen your legal arguments.
-                </p>
-              </div>
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-4">
-                <div className="rounded-full bg-primary p-2 text-primary-foreground">
-                  <Shield className="h-6 w-6" />
-                </div>
-                <h3 className="text-xl font-bold">Risk Assessment</h3>
-                <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-                  Identify potential legal risks and get suggestions for mitigation.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full border-t px-4 md:px-6">
-        <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-          © 2023 ClauseGuard. All rights reserved.
-        </p>
-      </footer>
+      <HeroSection />
+      <FeaturesSection />
+      <AIServicesSection />
+      <PricingSection />
+      <CTASection />
+      <FAQSection />
+      <Footer />
     </div>
   )
 }
->>>>>>> 2989183 (chore: Initial commit with line ending normalization)

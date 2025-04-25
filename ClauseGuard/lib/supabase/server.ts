@@ -1,10 +1,9 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers' // <-- Use Next.js server cookies
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import type { Database } from '@/lib/supabase/database.types';
 
-export const supabaseServer = () => {
-  const cookieStore = cookies() // <-- Correct server-side method
-  
-  return createServerComponentClient({
-    cookies: () => cookieStore
-  })
+export function createClient() {
+  return createServerComponentClient<Database>({
+    cookies
+  });
 }
