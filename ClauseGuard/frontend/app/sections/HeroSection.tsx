@@ -1,3 +1,4 @@
+import * as React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FileText, Search, Shield } from "lucide-react";
@@ -11,8 +12,7 @@ export default function HeroSection() {
           <img
             src="/team-meeting.jpg"
             alt="Business team meeting with advisor in modern office"
-            className="rounded-3xl shadow-2xl w-full max-w-md object-cover border-4 border-white dark:border-slate-800"
-            style={{ minHeight: 320 }}
+            className="rounded-3xl shadow-2xl w-full max-w-md object-cover border-4 border-white dark:border-slate-800 min-h-[320px]"
           />
         </div>
         {/* Headline and CTA */}
