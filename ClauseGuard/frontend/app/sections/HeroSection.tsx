@@ -1,5 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { FileText, Search, Shield } from "lucide-react";
 
@@ -9,10 +10,13 @@ export default function HeroSection() {
       <div className="container flex flex-col md:flex-row items-center justify-center gap-10 py-12 md:py-20">
         {/* Hero Image */}
         <div className="flex-1 flex justify-center mb-8 md:mb-0">
-          <img
+          <Image
             src="/team-meeting.jpg"
             alt="Business team meeting with advisor in modern office"
+            width={400}
+            height={320}
             className="rounded-3xl shadow-2xl w-full max-w-md object-cover border-4 border-white dark:border-slate-800 min-h-[320px]"
+            priority
           />
         </div>
         {/* Headline and CTA */}
