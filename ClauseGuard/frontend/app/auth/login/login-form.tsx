@@ -34,8 +34,8 @@ export default function LoginForm() {
     return /^\S+@\S+\.\S+$/.test(email)
   }
   function validatePassword(password: string) {
-    // At least 8 chars, 1 letter, 1 number
-    return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password)
+    // At least 8 chars, 1 letter, 1 number, allows special characters
+    return /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(password);
   }
 
   async function handleSubmit(e: React.FormEvent) {
