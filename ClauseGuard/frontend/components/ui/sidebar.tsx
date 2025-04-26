@@ -581,6 +581,7 @@ SidebarMenuSubButton.displayName = "SidebarMenuSubButton"
 // Exports: Only unique, actually defined components
 export {
   Sidebar,
+  SidebarProvider,
   SidebarGroupAction,
   SidebarGroupLabel,
   SidebarInput,
@@ -588,7 +589,6 @@ export {
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuBadge,
-
   SidebarMenuSkeleton,
   SidebarMenuSub,
   SidebarMenuSubButton,
