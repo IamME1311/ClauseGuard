@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+ClauseGuard/frontend/node_modules
 
 # next.js
 /.next/
