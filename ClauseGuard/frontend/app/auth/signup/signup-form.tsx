@@ -1,6 +1,5 @@
 "use client"
 
-import type React from "react"
 
 import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
@@ -10,7 +9,6 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from "lucide-react"
 
-import React from "react"
 
 function PasswordStrengthMeter({ password }: { password: string }) {
   let score = 0
@@ -23,7 +21,15 @@ function PasswordStrengthMeter({ password }: { password: string }) {
   return (
     <div className="mt-2">
       <div className="w-full h-2 rounded bg-gray-200">
-        <div className={`h-2 rounded ${color}`} style={{ width: `calc(${score}/4*100%)` }} />
+        <div
+          className={`h-2 rounded ${color} ${
+            score === 0 ? 'w-0' :
+            score === 1 ? 'w-1/4' :
+            score === 2 ? 'w-2/4' :
+            score === 3 ? 'w-3/4' :
+            'w-full'
+          }`}
+        />
       </div>
       <span className="text-xs text-gray-600">{label}</span>
     </div>
