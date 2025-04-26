@@ -13,6 +13,9 @@ import { Loader2 } from "lucide-react"
 
 import { FaGoogle, FaGithub } from "react-icons/fa"
 
+import { useEffect } from "react"
+import { useSession } from "@/lib/supabase/session-context"
+
 export default function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -28,6 +31,14 @@ export default function LoginForm() {
   const [resetError, setResetError] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
+  const session = useSession();
+
+  // Redirect authenticated users away from login page
+  useEffect(() => {
+    if (session) {
+      router.replace("/dashboard");
+    }
+  }, [session, router]);
 
   function validateEmail(email: string) {
     // Simple email regex
@@ -85,7 +96,9 @@ export default function LoginForm() {
     }
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: process.env.NEXT_PUBLIC_VERCEL_URL
+          ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/auth/callback`
+          : `${window.location.origin}/auth/callback`,
       })
       if (error) throw error
       setResetMessage("If this email is registered, you will receive a password reset link.")
@@ -95,7 +108,11 @@ export default function LoginForm() {
   }
 
   async function handleSocialLogin(provider: "google" | "github") {
-    await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: `${window.location.origin}/auth/callback` } })
+    await supabase.auth.signInWithOAuth({ provider, options: {
+    redirectTo: process.env.NEXT_PUBLIC_VERCEL_URL
+      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/auth/callback`
+      : `${window.location.origin}/auth/callback`
+  } })
   }
 
   return (

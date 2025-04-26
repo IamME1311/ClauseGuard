@@ -90,7 +90,9 @@ export default function SignupForm() {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: process.env.NEXT_PUBLIC_VERCEL_URL
+  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/auth/callback`
+  : `${window.location.origin}/auth/callback`,
         },
       })
 
