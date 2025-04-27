@@ -1,27 +1,18 @@
-import type { Metadata } from "next"
-import { createClient } from "@/lib/supabase/server"
-import { redirect } from "next/navigation"
-import Link from "next/link"
-import DashboardLayout from "@/components/dashboard-layout"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { FileText, Search, Plus } from "lucide-react"
-
-export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "ClauseGuard Dashboard",
-}
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import DashboardLayout from '@/components/dashboard-layout';
+import Link from 'next/link';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { FileText, Search, Plus } from 'lucide-react';
 
 export default async function DashboardPage() {
-  const supabase = createClient()
-  const { data: sessionData } = await supabase.auth.getSession()
+  const supabase = createServerComponentClient({ cookies });
+  const { data: { session } } = await supabase.auth.getSession();
 
-  // DEBUG: Log session data
-  console.log("DASHBOARD SESSION DATA:", JSON.stringify(sessionData));
-
-  // If user is not logged in, redirect to login
-  if (!sessionData.session) {
-    redirect("/auth/login")
+  if (!session) {
+    redirect('/auth/login');
   }
 
   // Get recent contracts
