@@ -14,7 +14,7 @@ import { Loader2 } from "lucide-react"
 import { FaGoogle, FaGithub } from "react-icons/fa"
 
 import { useEffect } from "react"
-import { useSession } from "@/lib/supabase/session-context"
+import { useSession } from "@/lib/supabase/session-context.tsx"
 
 export default function LoginForm() {
   const [email, setEmail] = useState("")
