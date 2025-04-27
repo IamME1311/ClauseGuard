@@ -16,6 +16,7 @@ import { FaGoogle, FaGithub } from "react-icons/fa"
 
 import { useEffect } from "react"
 import { useSession } from "@/lib/supabase/session-context"
+import { useDebounce } from "../../hooks/use-debounce"
 
 export default function LoginForm() {
   const { toast } = useToast();
@@ -52,6 +53,16 @@ export default function LoginForm() {
     // Simple email regex
     return /^\S+@\S+\.\S+$/.test(email)
   }
+
+  // Debounced email validation
+  const debouncedValidateEmail = useDebounce((val: string) => {
+    if (!validateEmail(val)) {
+      setEmailError("Please enter a valid email address.");
+    } else {
+      setEmailError(null);
+    }
+  }, 300);
+
   function validatePassword(password: string) {
     // At least 8 chars, 1 letter, 1 number, allows special characters
     return /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(password);
@@ -179,7 +190,10 @@ export default function LoginForm() {
               type="email"
               placeholder="youremail@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                debouncedValidateEmail(e.target.value);
+              }}
               required
               disabled={isSubmitting}
               aria-invalid={!!emailError}

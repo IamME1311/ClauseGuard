@@ -39,6 +39,9 @@ export default function HomePage() {
               <Link href="#faq" className="transition-colors hover:text-foreground/80">
                 FAQ
               </Link>
+              <Link href="/dashboard" className="transition-colors hover:text-foreground/80">
+                Dashboard
+              </Link>
             </nav>
           </div>
           {/* Mobile Menu Button */}
@@ -92,6 +95,9 @@ export default function HomePage() {
                 </Link>
                 <Link href="#faq" onClick={() => setMobileMenuOpen(false)} className="py-2 px-3 rounded hover:bg-primary/10 transition">
                   FAQ
+                </Link>
+                <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="py-2 px-3 rounded hover:bg-primary/10 transition">
+                  Dashboard
                 </Link>
                 <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)} className="mt-4 py-2 px-3 rounded hover:bg-primary/10 transition">
                   Login
