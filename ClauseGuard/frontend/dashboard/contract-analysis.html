@@ -16,7 +16,7 @@
         <i class="fas fa-scale-balanced logo-icon"></i>
         ClauseGuard
       </a>
-      <button id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-label="Toggle navigation">
+      <button id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">
         <i class="fas fa-bars"></i>
       </button>
       <div class="nav-links">
@@ -49,10 +49,10 @@
     
     <!-- Input Method Tabs -->
     <div class="tabs">
-      <button id="tab-text" class="tab-btn active" aria-selected="true">
+      <button id="tab-text" class="tab-btn active" >
         <i class="fas fa-keyboard"></i> Text Input
       </button>
-      <button id="tab-file" class="tab-btn" aria-selected="false">
+      <button id="tab-file" class="tab-btn" >
         <i class="fas fa-file-upload"></i> File Upload
       </button>
     </div>
@@ -61,11 +61,11 @@
       <div class="contract-editor">
         <!-- Text Input Tab Content -->
         <div id="text-input-tab" class="tab-content">
-          <div class="card" style="transform: none; margin-bottom: 1rem;">
-            <h2 style="font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <div class="card" class="card-spacing">
+            <h2 class="card-header-flex">
               <i class="fas fa-file-alt"></i> Contract Text
             </h2>
-            <textarea id="contract-text" class="form-input" style="min-height: 400px; font-family: monospace; resize: vertical;" placeholder="Paste your contract text here..."></textarea>
+            <textarea id="contract-text" class="form-input" class="large-monospace-textarea" placeholder="Paste your contract text here..."></textarea>
             <div class="flex gap-2 mt-4">
               <button id="analyze-btn" class="btn btn-primary">
                 <i class="fas fa-search"></i> Analyze Contract
@@ -81,28 +81,28 @@
         </div>
         
         <!-- File Upload Tab Content -->
-        <div id="file-upload-tab" class="tab-content" style="display: none;">
-          <div class="card" style="transform: none; margin-bottom: 1rem;">
-            <h2 style="font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <div id="file-upload-tab" class="tab-content" class="hidden">
+          <div class="card" class="card-spacing">
+            <h2 class="card-header-flex">
               <i class="fas fa-cloud-upload-alt"></i> Upload Contract
             </h2>
             <div class="file-upload" id="file-drop-area">
               <input type="file" id="contract-file" accept=".pdf,.docx,.doc,.txt" hidden />
-              <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+              <i class="fas fa-cloud-upload-alt" class="icon-large secondary-text mb-4"></i>
               <p>Drag and drop your contract file here</p>
-              <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">Supported formats: PDF, DOCX, DOC, TXT</p>
+              <p class="secondary-text mt-2 small-text">Supported formats: PDF, DOCX, DOC, TXT</p>
               <button class="btn btn-outline mt-4" id="browse-files">
                 <i class="fas fa-folder-open"></i> Browse Files
               </button>
             </div>
-            <div id="file-info" class="mt-4" style="display: none;">
-              <div class="flex items-center gap-2 p-3 rounded-md" style="background-color: var(--bg-tertiary);">
-                <i class="fas fa-file-alt" style="font-size: 1.5rem; color: var(--accent-teal);"></i>
-                <div style="flex: 1;">
-                  <p id="file-name" style="font-weight: 600;"></p>
-                  <p id="file-size" style="font-size: 0.875rem; color: var(--text-secondary);"></p>
+            <div id="file-info" class="mt-4" class="hidden">
+              <div class="flex items-center gap-2 p-3 rounded-md" class="bg-tertiary">
+                <i class="fas fa-file-alt" class="icon-med accent-teal"></i>
+                <div class="flex-1">
+                  <p id="file-name" class="fw-600"></p>
+                  <p id="file-size" class="small-text secondary-text"></p>
                 </div>
-                <button id="remove-file" class="btn btn-icon btn-secondary">
+                <button id="remove-file" class="btn btn-icon btn-secondary" title="Remove file">
                   <i class="fas fa-times"></i>
                 </button>
               </div>
@@ -115,12 +115,12 @@
       </div>
       
       <div class="analysis-panel" id="analysis-results">
-        <div class="card" style="transform: none;">
-          <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <div class="card" class="card-spacing">
+          <h2 class="card-header-flex">
             <i class="fas fa-chart-pie"></i> Analysis Results
           </h2>
-          <div style="color: var(--text-secondary); text-align: center; padding: 2rem 0;">
-            <i class="fas fa-chart-pie" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+          <div class="secondary-text text-center py-8">
+            <i class="fas fa-chart-pie icon-large mb-4 opacity-50"></i>
             <p>Enter your contract text or upload a file to get started.</p>
           </div>
         </div>
@@ -128,9 +128,9 @@
     </div>
     
     <!-- Save Analysis Section -->
-    <div class="mt-8" id="save-analysis-section" style="display: none;">
-      <div class="card" style="transform: none;">
-        <h2 style="font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+    <div class="mt-8" id="save-analysis-section" class="hidden">
+      <div class="card" class="card-spacing">
+        <h2 class="card-header-flex">
           <i class="fas fa-save"></i> Save Analysis
         </h2>
         <p class="mb-4">Save this analysis to your account for future reference.</p>
@@ -324,13 +324,13 @@ IN WITNESS WHEREOF, the parties have executed this Agreement as of the Effective
       async function analyzeContract(text) {
         // Show loading state
         analysisResults.innerHTML = `
-          <div class="card" style="transform: none;">
-            <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <div class="card" class="card-spacing">
+            <h2 class="card-header-flex">
               <i class="fas fa-chart-pie"></i> Analysis Results
             </h2>
             <div style="text-align: center; padding: 2rem 0;">
               <div class="loading-spinner"></div>
-              <p style="margin-top: 1rem; color: var(--text-secondary);">Analyzing contract...</p>
+              <p class="secondary-text mt-4">Analyzing contract...</p>
             </div>
           </div>
         `;
@@ -340,8 +340,8 @@ IN WITNESS WHEREOF, the parties have executed this Agreement as of the Effective
           
           // Render results
           analysisResults.innerHTML = `
-            <div class="card" style="transform: none;">
-              <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <div class="card" class="card-spacing">
+              <h2 class="card-header-flex">
                 <i class="fas fa-chart-pie"></i> Analysis Results
               </h2>
               
@@ -349,30 +349,30 @@ IN WITNESS WHEREOF, the parties have executed this Agreement as of the Effective
                 <h3 style="font-size: 1rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
                   <i class="fas fa-tachometer-alt"></i> Risk Score
                 </h3>
-                <div class="risk-meter" style="margin: 1.5rem 0; position: relative; height: 8px; background-color: var(--bg-tertiary); border-radius: 4px; overflow: hidden;">
-                  <div class="risk-level" style="height: 100%; background: linear-gradient(90deg, var(--success), var(--warning), var(--danger));"></div>
-                  <div class="risk-marker" style="position: absolute; top: -4px; width: 16px; height: 16px; background-color: var(--text-primary); border-radius: 50%; transform: translateX(-50%); left: ${results.risk_score}%;"></div>
+                <div class="risk-meter" class="risk-meter">
+                  <div class="risk-level" class="risk-level"></div>
+                  <div class="risk-marker" class="risk-marker" style="left: ${results.risk_score}%;"></div>
                 </div>
-                <div style="display: flex; justify-content: space-between; margin-top: 0.25rem; font-size: 0.75rem; color: var(--text-secondary);">
+                <div class="flex-between secondary-text mt-1 small-text">
                   <span>Low Risk</span>
                   <span>Medium Risk</span>
                   <span>High Risk</span>
                 </div>
-                <p style="text-align: center; margin-top: 0.5rem; font-weight: 600;">
+                <p class="text-center mt-2 fw-600">
                   ${results.risk_score}/100
                 </p>
               </div>
               
-              <div style="margin-top: 2rem;">
-                <h3 style="font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+              <div class="mt-8">
+                <h3 class="card-header-flex-sm">
                   <i class="fas fa-exclamation-triangle"></i> Issues Identified
                 </h3>
                 
-                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div class="flex-col gap-3">
                   ${results.issues.map(issue => `
-                    <div style="padding: 1rem; background-color: var(--bg-tertiary); border-radius: var(--radius-md); border-left: 3px solid ${issue.severity === 'high' ? 'var(--danger)' : issue.severity === 'medium' ? 'var(--warning)' : 'var(--success)'};">
-                      <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="font-weight: 600;">${issue.clause}</span>
+                    <div class="issue-box" style="border-left: 3px solid ${issue.severity === 'high' ? 'var(--danger)' : issue.severity === 'medium' ? 'var(--warning)' : 'var(--success)'};">
+                      <div class="flex-between mb-2">
+                        <span class="fw-600">${issue.clause}</span>
                         <span class="badge ${issue.severity === 'high' ? 'badge-danger' : issue.severity === 'medium' ? 'badge-warning' : 'badge-success'}">${issue.severity}</span>
                       </div>
                       <p>${issue.issue}</p>
@@ -381,14 +381,14 @@ IN WITNESS WHEREOF, the parties have executed this Agreement as of the Effective
                 </div>
               </div>
               
-              <div style="margin-top: 2rem;">
-                <h3 style="font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+              <div class="mt-8">
+                <h3 class="card-header-flex-sm">
                   <i class="fas fa-lightbulb"></i> Recommendations
                 </h3>
-                <ul style="list-style-position: inside; padding-left: 0.5rem;">
+                <ul class="list-inside pl-2">
                   ${results.recommendations.map(rec => `
-                    <li style="margin-bottom: 0.75rem; padding-left: 0.5rem; position: relative;">
-                      <span style="position: absolute; left: -0.5rem; color: var(--accent-teal);">•</span>
+                    <li class="mb-3 pl-2 relative">
+                      <span class="absolute accent-teal left-n2">•</span>
                       ${rec}
                     </li>
                   `).join('')}
@@ -421,12 +421,12 @@ IN WITNESS WHEREOF, the parties have executed this Agreement as of the Effective
           
         } catch (error) {
           analysisResults.innerHTML = `
-            <div class="card" style="transform: none;">
-              <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <div class="card" class="card-spacing">
+              <h2 class="card-header-flex">
                 <i class="fas fa-chart-pie"></i> Analysis Results
               </h2>
               <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle" style="font-size: 1.5rem;"></i>
+                <i class="fas fa-exclamation-circle" class="icon-med"></i>
                 <div>
                   <h4 style="font-weight: 600; margin-bottom: 0.25rem;">Error</h4>
                   <p>${error.message || 'Failed to analyze contract. Please try again.'}</p>
@@ -441,12 +441,12 @@ IN WITNESS WHEREOF, the parties have executed this Agreement as of the Effective
       clearBtn.addEventListener('click', () => {
         contractText.value = '';
         analysisResults.innerHTML = `
-          <div class="card" style="transform: none;">
-            <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <div class="card" class="card-spacing">
+            <h2 class="card-header-flex">
               <i class="fas fa-chart-pie"></i> Analysis Results
             </h2>
-            <div style="color: var(--text-secondary); text-align: center; padding: 2rem 0;">
-              <i class="fas fa-chart-pie" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+            <div class="secondary-text text-center py-8">
+              <i class="fas fa-chart-pie icon-large mb-4 opacity-50"></i>
               <p>Enter your contract text or upload a file to get started.</p>
             </div>
           </div>

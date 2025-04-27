@@ -23,7 +23,7 @@ export default function LoginForm() {
   const session = useSession();
 
   useEffect(() => {
-    if (session) {
+    if (session != null) {
       router.replace("/dashboard");
     }
   }, [session, router]);

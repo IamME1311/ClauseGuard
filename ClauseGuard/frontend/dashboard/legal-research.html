@@ -47,8 +47,8 @@
       </div>
     </div>
     
-    <div class="card" style="transform: none; margin-bottom: 2rem;">
-      <h2 style="font-size: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+    <div class="card mb-4">
+      <h2 class="card-header-flex mb-4">
         <i class="fas fa-search"></i> Search Case Law
       </h2>
       
@@ -56,9 +56,9 @@
         <div class="flex-1">
           <div class="form-group mb-0">
             <label for="precedent-search" class="form-label">Search Query</label>
-            <div style="position: relative;">
-              <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
-              <input type="text" id="precedent-search" class="form-input" style="padding-left: 2.5rem;" placeholder="Search case law (e.g., 'data privacy', 'copyright infringement')">
+            <div class="relative">
+              <i class="fas fa-search absolute left-4 top-1/2 translate-y--1/2 secondary-text"></i>
+              <input type="text" id="precedent-search" class="form-input pl-10" placeholder="Search case law (e.g., 'data privacy', 'copyright infringement')">
             </div>
           </div>
         </div>
@@ -86,7 +86,7 @@
             </select>
           </div>
           
-          <button id="search-btn" class="btn btn-primary" style="height: 42px;">
+          <button id="search-btn" class="btn btn-primary h-42">
             <i class="fas fa-search"></i> Search
           </button>
         </div>
@@ -94,29 +94,29 @@
     </div>
     
     <div class="search-history mb-4">
-      <h3 style="font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <h3 class="section-title-xs mb-4 flex items-center gap-2">
         <i class="fas fa-history"></i> Recent Searches
       </h3>
       <div class="history-tags flex flex-wrap gap-2" id="search-history-tags">
         <!-- Will be populated dynamically -->
-        <span class="badge badge-primary" style="cursor: pointer;">data privacy laws</span>
-        <span class="badge badge-primary" style="cursor: pointer;">intellectual property</span>
-        <span class="badge badge-primary" style="cursor: pointer;">contract breach</span>
-        <span class="badge badge-primary" style="cursor: pointer;">employment discrimination</span>
-        <span class="badge badge-primary" style="cursor: pointer;">copyright infringement</span>
+        <span class="badge badge-primary cursor-pointer">data privacy laws</span>
+        <span class="badge badge-primary cursor-pointer">intellectual property</span>
+        <span class="badge badge-primary cursor-pointer">contract breach</span>
+        <span class="badge badge-primary cursor-pointer">employment discrimination</span>
+        <span class="badge badge-primary cursor-pointer">copyright infringement</span>
       </div>
     </div>
     
     <div id="results-container">
       <!-- Results will be populated here -->
-      <div style="text-align: center; color: var(--text-secondary); padding: 3rem 0;">
-        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+      <div class="secondary-text text-center py-12">
+        <i class="fas fa-search icon-large mb-4 opacity-50"></i>
         <p>Enter a search query to find relevant legal precedents.</p>
       </div>
     </div>
     
     <!-- Pagination -->
-    <div class="pagination mt-4" id="pagination" style="display: none;">
+    <div class="pagination mt-4 hidden" id="pagination">
       <button id="prev-page" class="btn btn-outline" disabled>
         <i class="fas fa-chevron-left"></i> Previous
       </button>
@@ -226,8 +226,8 @@
           
           if (results.length === 0) {
             resultsContainer.innerHTML = `
-              <div style="text-align: center; color: var(--text-secondary); padding: 3rem 0;">
-                <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+              <div class="secondary-text text-center py-12">
+                <i class="fas fa-search icon-large mb-4 opacity-50"></i>
                 <p>No results found for "${query}"${court ? ` in ${court}` : ''}${year ? ` from ${year}` : ''}.</p>
                 <p>Try a different search term or adjust your filters.</p>
               </div>

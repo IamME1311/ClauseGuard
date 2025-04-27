@@ -504,6 +504,17 @@ body {
 }
 
 /* Accessibility focus styles */
+.section-title-sm {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.opacity-50 {
+  opacity: 0.5;
+}
+
 :focus-visible {
   outline: 2px solid var(--accent-teal);
   outline-offset: 2px;
@@ -988,7 +999,7 @@ body {
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 1.5rem;
   overflow-x: auto;
-  scrollbar-width: none;
+  /* scrollbar-width: none; */
 }
 
 .tabs::-webkit-scrollbar {
