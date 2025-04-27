@@ -16,6 +16,9 @@ export default async function DashboardPage() {
   const supabase = createClient()
   const { data: sessionData } = await supabase.auth.getSession()
 
+  // DEBUG: Log session data
+  console.log("DASHBOARD SESSION DATA:", JSON.stringify(sessionData));
+
   // If user is not logged in, redirect to login
   if (!sessionData.session) {
     redirect("/auth/login")
@@ -28,6 +31,9 @@ export default async function DashboardPage() {
     .eq("user_id", sessionData.session.user.id)
     .order("created_at", { ascending: false })
     .limit(5)
+
+  // DEBUG: Log contracts data
+  console.log("DASHBOARD CONTRACTS DATA:", JSON.stringify(contracts));
 
   return (
     <DashboardLayout>
