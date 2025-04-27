@@ -5,6 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
+import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -17,6 +18,16 @@ import { useEffect } from "react"
 import { useSession } from "@/lib/supabase/session-context"
 
 export default function LoginForm() {
+  const { toast } = useToast();
+  const router = useRouter();
+  const sessionContext = useSession();
+  const session = sessionContext?.session;
+
+  useEffect(() => {
+    if (session != null) {
+      router.push("/dashboard");
+    }
+  }, [session]);
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -76,11 +87,21 @@ export default function LoginForm() {
       if (error) {
         throw error
       }
-      setSuccess("Login successful! Redirecting...")
-      // Optionally redirect after login
-      setTimeout(() => router.push("/dashboard"), 1200)
+      setSuccess("Login successful! Redirecting...");
+      toast({
+        title: "Login successful!",
+        description: "Welcome back! Redirecting to dashboard...",
+        duration: 2000,
+      });
+      router.push("/dashboard");
     } catch (error: any) {
-      setError(error.message || "An error occurred during login")
+      setError(error.message || "An error occurred during login");
+      toast({
+        title: "Login failed",
+        description: error.message || "An error occurred during login",
+        variant: "destructive",
+        duration: 2500,
+      });
     } finally {
       setIsSubmitting(false)
     }
