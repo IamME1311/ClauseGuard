@@ -8,8 +8,15 @@ import { Button } from '@/components/ui/button';
 import { FileText, Search, Plus } from 'lucide-react';
 
 export default async function DashboardPage() {
+  // Debug logging for cookies and session
+  const allCookies = await cookies();
+  // @ts-ignore
+  console.log('COOKIES:', allCookies.getAll ? allCookies.getAll() : allCookies);
+
   const supabase = createServerComponentClient({ cookies });
   const { data: { session } } = await supabase.auth.getSession();
+
+  console.log('SUPABASE SESSION:', session);
 
   if (!session) {
     redirect('/auth/login');

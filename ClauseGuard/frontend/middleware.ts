@@ -7,10 +7,6 @@ export async function middleware(request: NextRequest) {
 
   const { data: { session } } = await supabase.auth.getSession()
 
-  // Redirect to login if no session and trying to access dashboard
-  if (!session && request.nextUrl.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/auth/login', request.url))
-  }
-
+  // No custom redirects; let page-level logic handle authentication
   return res
 }
