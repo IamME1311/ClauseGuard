@@ -20,7 +20,7 @@ import { useSession } from "@/lib/supabase/session-context"
 export default function LoginForm() {
   const { toast } = useToast();
   const router = useRouter();
-  const { session } = useSession();
+  const session = useSession();
 
   useEffect(() => {
     if (session) {
