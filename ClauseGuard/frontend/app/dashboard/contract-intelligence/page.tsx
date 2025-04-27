@@ -3,7 +3,9 @@ export default function ContractIntelligencePage() {
     <div>
       <h2 className="text-xl font-bold mb-4">Contract Intelligence Assistant</h2>
       <form className="mb-4">
+        <label htmlFor="contract-file" className="block mb-1 font-medium">Contract File</label>
         <input
+          id="contract-file"
           type="file"
           accept=".pdf,.doc,.docx,.txt"
           className="input input-bordered w-full mb-2"
