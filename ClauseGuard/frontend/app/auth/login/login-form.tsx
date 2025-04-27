@@ -90,8 +90,7 @@ export default function LoginForm() {
         description: "Welcome back! Redirecting to dashboard...",
         duration: 2000,
       });
-      await router.refresh();
-      setTimeout(() => router.push("/dashboard"), 150);
+      router.push("/dashboard");
     } catch (error: any) {
       console.log("LOGIN ERROR:", error);
       setError(error.message || "An error occurred during login");
