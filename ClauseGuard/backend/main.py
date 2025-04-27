@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status, Request, BackgroundTasks
+from fastapi import FastAPI, Depends, HTTPException, status, Request, BackgroundTasks, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
@@ -9,19 +9,10 @@ import uvicorn
 import json
 import asyncio
 from dotenv import load_dotenv
+from agent import analyze_contract_text, legal_research_query
 
 # Load environment variables only once
 load_dotenv()
-
-# Import LlamaIndex components
-try:
-    from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
-    from llama_index.core.agent.workflow import FunctionAgent
-    from llama_index.llms.openai import OpenAI
-    HAS_LLAMA_INDEX = True
-except ImportError:
-    print("Warning: LlamaIndex not available. Legal research functionality will be limited.")
-    HAS_LLAMA_INDEX = False
 
 # Initialize FastAPI app
 app = FastAPI(title="ClauseGuard API")
@@ -132,31 +123,19 @@ async def login(user: User):
 
 # Legal research endpoints
 
-@app.post("/api/search")
-async def search_precedents(query: SearchQuery, user = Depends(get_current_user)):
+@app.post("/api/legal-research")
+async def legal_research_api(payload: dict):
+    import logging
+    query = payload.get("query", "")
+    logging.info(f"Received legal research request: {query}")
     try:
-        supabase.table("user_searches").insert({
-            "user_id": user.id,
-            "query": query.query
-        }).execute()
-        response = supabase.table("precedents").select("*").execute()
-        precedents = response.data
-        results = []
-        for precedent in precedents:
-            searchable_text = f"{precedent['title']} {precedent['summary']} {precedent['content']}".lower()
-            if query.query.lower() in searchable_text:
-                title_match = query.query.lower() in precedent['title'].lower()
-                summary_match = query.query.lower() in precedent['summary'].lower()
-                relevance = 0.5
-                if title_match:
-                    relevance += 0.3
-                if summary_match:
-                    relevance += 0.2
-                precedent["relevance"] = relevance
-                results.append(precedent)
-        return results
+        if not query:
+            raise ValueError("Query is required.")
+        result = await legal_research_query(query)
+        return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error searching precedents: {str(e)}")
+        logging.exception("Error in legal research")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/analyze-contract", response_model=ContractAnalysisResponse)
 async def analyze_contract(request: ContractAnalysisRequest, user = Depends(get_current_user)):
@@ -244,20 +223,32 @@ async def search_precedents(q: str):
         }
     ]
 
-@app.post("/api/contract-analysis")
-async def analyze_contract(request: ContractRequest):
-    # Mock contract analysis
-    return {
-        "risk_score": 65,
-        "issues": [
-            {"clause": "Section 8.2", "issue": "Ambiguous liability terms", "severity": "high"},
-            {"clause": "Section 12.1", "issue": "Non-standard confidentiality period", "severity": "medium"}
-        ],
-        "recommendations": [
-            "Clarify liability limitations in Section 8.2",
-            "Review confidentiality terms against industry standards"
-        ]
-    }
+@app.post("/api/contract-intelligence")
+async def contract_intelligence(request: ContractRequest):
+    import logging
+    logging.info("Received contract intelligence request (text length=%d)", len(request.contract_text))
+    try:
+        result = await analyze_contract_text(request.contract_text)
+        return result
+    except Exception as e:
+        logging.exception("Error analyzing contract text")
+        raise HTTPException(status_code=500, detail=f"Error analyzing contract: {str(e)}")
+
+@app.post("/api/contract-intelligence/upload")
+async def contract_intelligence_upload(file: UploadFile = File(...)):
+    import logging
+    logging.info(f"Received contract file upload: {file.filename}")
+    try:
+        # Save file temporarily
+        temp_path = f"/tmp/{file.filename}"
+        with open(temp_path, "wb") as buffer:
+            buffer.write(await file.read())
+        result = await analyze_contract_file(temp_path)
+        os.remove(temp_path)
+        return result
+    except Exception as e:
+        logging.exception("Error analyzing uploaded contract file")
+        raise HTTPException(status_code=500, detail=f"Error analyzing contract file: {str(e)}")
 
 # Run the application
 if __name__ == "__main__":
