@@ -92,6 +92,7 @@ export default function LoginForm() {
       });
       router.push("/dashboard");
     } catch (error: any) {
+      console.log("LOGIN ERROR:", error);
       setError(error.message || "An error occurred during login");
       toast({
         title: "Login failed",
