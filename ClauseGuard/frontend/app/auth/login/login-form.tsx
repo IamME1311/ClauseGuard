@@ -20,14 +20,13 @@ import { useSession } from "@/lib/supabase/session-context"
 export default function LoginForm() {
   const { toast } = useToast();
   const router = useRouter();
-  const sessionContext = useSession();
-  const session = sessionContext?.session;
+  const { session } = useSession();
 
   useEffect(() => {
-    if (session != null) {
-      router.push("/dashboard");
+    if (session) {
+      router.replace("/dashboard");
     }
-  }, [session]);
+  }, [session, router]);
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
