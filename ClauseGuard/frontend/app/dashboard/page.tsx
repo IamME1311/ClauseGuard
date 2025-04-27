@@ -19,7 +19,7 @@ export default async function DashboardPage() {
   const { data: contracts } = await supabase
     .from("contracts")
     .select("*")
-    .eq("user_id", sessionData.session.user.id)
+    .eq("user_id", session.user.id)
     .order("created_at", { ascending: false })
     .limit(5)
 
