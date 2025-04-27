@@ -21,13 +21,10 @@ import { useDebounce } from "../../hooks/use-debounce"
 export default function LoginForm() {
   const { toast } = useToast();
   const router = useRouter();
-  const session = useSession();
+  // const session = useSession(); // No longer needed for redirect
 
-  useEffect(() => {
-    if (session != null) {
-      router.replace("/dashboard");
-    }
-  }, [session, router]);
+  // Removed session-based redirect useEffect
+
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -42,12 +39,6 @@ export default function LoginForm() {
   const [resetError, setResetError] = useState<string | null>(null)
   const supabase = createClient()
 
-  // Redirect authenticated users away from login page
-  useEffect(() => {
-    if (session) {
-      router.replace("/dashboard");
-    }
-  }, [session, router]);
 
   function validateEmail(email: string) {
     // Simple email regex
