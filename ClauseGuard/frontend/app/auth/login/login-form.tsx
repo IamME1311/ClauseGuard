@@ -182,6 +182,7 @@ export default function LoginForm() {
               required
               disabled={isSubmitting}
               aria-invalid={!!emailError}
+              autoComplete="email"
             />
             {emailError && (
               <p className="text-xs text-red-600 mt-1">{emailError}</p>
@@ -199,6 +200,7 @@ export default function LoginForm() {
                 required
                 disabled={isSubmitting}
                 aria-invalid={!!passwordError}
+                autoComplete="current-password"
               />
               <button
                 type="button"

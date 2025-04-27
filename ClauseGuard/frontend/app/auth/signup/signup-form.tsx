@@ -133,6 +133,7 @@ export default function SignupForm() {
           required
           disabled={isSubmitting}
           aria-invalid={!!emailError}
+          autoComplete="email"
         />
         {emailError && (
           <p className="text-xs text-red-600 mt-1">{emailError}</p>
@@ -150,6 +151,7 @@ export default function SignupForm() {
             required
             disabled={isSubmitting}
             aria-invalid={!!passwordError}
+            autoComplete="new-password"
           />
           <button
             type="button"
@@ -178,6 +180,7 @@ export default function SignupForm() {
             required
             disabled={isSubmitting}
             aria-invalid={!!confirmPasswordError}
+            autoComplete="new-password"
           />
           <button
             type="button"
