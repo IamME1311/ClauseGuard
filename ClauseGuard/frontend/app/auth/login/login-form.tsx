@@ -39,9 +39,7 @@ export default function LoginForm() {
   const [resetEmail, setResetEmail] = useState("")
   const [resetMessage, setResetMessage] = useState<string | null>(null)
   const [resetError, setResetError] = useState<string | null>(null)
-  const router = useRouter()
   const supabase = createClient()
-  const session = useSession();
 
   // Redirect authenticated users away from login page
   useEffect(() => {
