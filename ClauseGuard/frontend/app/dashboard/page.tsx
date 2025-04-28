@@ -1,123 +1,51 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import DashboardLayout from '@/components/dashboard-layout';
+
+'use client';
+import { useUser } from "../../context/UserContext";
+import StatsCards from "../components/StatsCards";
+import DocumentChart from "../components/DocumentChart";
+import RecentDocuments from "../components/RecentDocuments";
+import FeaturesSection from "../components/FeaturesSection";
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { FileText, Search, Plus } from 'lucide-react';
 
-export default async function DashboardPage() {
-  // Debug logging for cookies and session
-  const allCookies = await cookies();
-  // @ts-ignore
-  console.log('COOKIES:', allCookies.getAll ? allCookies.getAll() : allCookies);
+export default function DashboardPage() {
+  const { user, loading } = useUser();
 
-  const supabase = createServerComponentClient({ cookies });
-  const { data: { session } } = await supabase.auth.getSession();
-
-  console.log('SUPABASE SESSION:', session);
-
-  if (!session) {
-    redirect('/auth/login');
-  }
-
-  // Get recent contracts
-  const { data: contracts } = await supabase
-    .from("contracts")
-    .select("*")
-    .eq("user_id", session.user.id)
-    .order("created_at", { ascending: false })
-    .limit(5)
-
-  // DEBUG: Log contracts data
-  console.log("DASHBOARD CONTRACTS DATA:", JSON.stringify(contracts));
+  if (loading) return <div className="p-8 text-center text-gray-400">Loading...</div>;
 
   return (
-    <DashboardLayout>
-      <div className="container py-6">
-        <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xl">Contract Analysis</CardTitle>
-              <CardDescription>Upload and analyze legal contracts</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Extract key clauses, identify risks, and get summaries of legal documents.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button asChild>
-                <Link href="/dashboard/contract-analysis">
-                  <FileText className="mr-2 h-4 w-4" />
-                  Analyze Contract
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xl">Legal Research</CardTitle>
-              <CardDescription>Research legal topics and precedents</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Search for legal information, case law, and legal precedents.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button asChild>
-                <Link href="/dashboard/legal-research">
-                  <Search className="mr-2 h-4 w-4" />
-                  Start Research
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
-
-        <h2 className="text-2xl font-bold mt-10 mb-4">Recent Contracts</h2>
-        {contracts && contracts.length > 0 ? (
-          <div className="space-y-4">
-            {contracts.map((contract) => (
-              <Card key={contract.id}>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">{contract.title}</CardTitle>
-                  <CardDescription>{new Date(contract.created_at).toLocaleDateString()}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">
-                    {contract.content.substring(0, 150)}...
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline" asChild>
-                    <Link href={`/dashboard/contracts/${contract.id}`}>View Details</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
+    <>
+      {!user && (
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded">
+          <div className="flex justify-between items-center">
+            <span>
+              You are using ClauseGuard in free trial mode. <b>Sign up or log in</b> to access premium features.
+            </span>
+            <Link href="/auth/signup" className="ml-4 px-3 py-1 bg-primary text-white rounded hover:bg-primary/80 transition">Sign Up</Link>
           </div>
-        ) : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center p-6">
-              <p className="mb-4 text-center text-slate-500 dark:text-slate-400">
-                No contracts analyzed yet. Start by analyzing your first contract.
-              </p>
-              <Button asChild>
-                <Link href="/dashboard/contract-analysis">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Analyze Contract
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+        </div>
+      )}
+      {user && (
+        <div className="flex justify-end items-center gap-3 mb-4">
+          <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg">
+            <div className="w-8 h-8 bg-blue-300 rounded-full flex items-center justify-center font-bold text-blue-900">
+              {user.email?.[0]?.toUpperCase() || 'U'}
+            </div>
+            <span className="font-semibold text-slate-800 dark:text-white">{user.email}</span>
+          </div>
+        </div>
+      )}
+      <StatsCards />
+      <div className="mb-6">
+        <div className="flex gap-4 border-b mb-4">
+          <button className="px-4 py-2 font-semibold border-b-2 border-blue-600 text-blue-600 bg-transparent dark:text-blue-400">Overview</button>
+          <button className="px-4 py-2 font-semibold text-slate-500 dark:text-slate-400">Analytics</button>
+          <button className="px-4 py-2 font-semibold text-slate-500 dark:text-slate-400">Timeline</button>
+        </div>
+        <DocumentChart />
       </div>
-    </DashboardLayout>
-  )
+      <RecentDocuments />
+      <FeaturesSection />
+    </>
+  );
 }
+

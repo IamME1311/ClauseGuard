@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import DashboardLayout from "@/components/dashboard-layout"
 import LegalResearchForm from "./legal-research-form"
+import { Search } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Legal Research",
@@ -20,9 +21,15 @@ export default async function LegalResearchPage() {
 
   return (
     <DashboardLayout>
-      <div className="container py-6">
-        <h1 className="text-3xl font-bold mb-6">Legal Research</h1>
-        <LegalResearchForm />
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Search className="w-7 h-7 text-pink-600" />
+          <h1 className="text-2xl font-bold">Legal Research</h1>
+        </div>
+        <div className="rounded-xl bg-white shadow p-8 text-center text-gray-500 dark:bg-slate-900">
+          <p>Use AI to research legal questions and get instant answers.</p>
+          <p className="mt-2 text-xs text-gray-400">(Connect to backend for real data)</p>
+        </div>
       </div>
     </DashboardLayout>
   )

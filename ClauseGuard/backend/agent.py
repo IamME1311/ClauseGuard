@@ -5,6 +5,12 @@ import asyncio
 logger = logging.getLogger("clauseguard.agent")
 logging.basicConfig(level=logging.INFO)
 
+__all__ = [
+    "analyze_contract_text",
+    "analyze_contract_file",
+    "legal_research_query"
+]
+
 # --- Contract Analysis Logic ---
 async def analyze_contract_text(contract_text: str) -> Dict[str, Any]:
     """
@@ -69,3 +75,12 @@ async def legal_research_query(query: str) -> Dict[str, Any]:
         "references": references,
         "precedents": precedents
     }
+
+# Optional: Local test entry point
+if __name__ == "__main__":
+    import asyncio
+    async def main():
+        print(await analyze_contract_text("Sample contract text for testing."))
+        print(await analyze_contract_file("/tmp/sample_contract.pdf"))
+        print(await legal_research_query("What is the latest on CFAA scraping cases?"))
+    asyncio.run(main())

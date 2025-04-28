@@ -12,13 +12,8 @@ export default function CTASection() {
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Button asChild size="lg" className="btn-primary w-full flex items-center gap-2 justify-center shadow-lg">
-            <Link href="/auth/signup">
-              <FaUserPlus className="inline-block" /> Sign Up Free
-            </Link>
-          </Button>
-          <Button asChild variant="outline" size="lg" className="btn-outline w-full flex items-center gap-2 justify-center border-2 border-primary text-primary hover:bg-primary hover:text-white transition">
-            <Link href="/contact">
-              <FaCalendar className="inline-block" /> Schedule Demo
+            <Link href="/dashboard">
+              <FaUserPlus className="inline-block" /> Get Started Free
             </Link>
           </Button>
         </div>

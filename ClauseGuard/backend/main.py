@@ -36,9 +36,38 @@ if not SUPABASE_URL or not SUPABASE_KEY:
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Models
+# ------------------
+# Data Models
+# ------------------
+from datetime import datetime
+
+class Token(BaseModel):
+    """Authentication token response."""
+    access_token: str
+    token_type: str
+
+class UserSignup(BaseModel):
+    """User signup request."""
+    email: str
+    password: str
+
+class UserLogin(UserSignup):
+    """User login request (same fields as signup)."""
+    pass
+
+class UserProfile(BaseModel):
+    """User profile for frontend display/editing."""
+    id: Optional[str]
+    email: str
+    name: Optional[str] = None
+    avatar: Optional[str] = None
+    created_at: Optional[datetime] = None
+
 class SearchQuery(BaseModel):
     query: str
+
+class ContractRequest(BaseModel):
+    contract_text: str
 
 class ContractAnalysisRequest(BaseModel):
     text: str
@@ -48,16 +77,14 @@ class ContractAnalysisResponse(BaseModel):
     issues: List[Dict[str, Any]]
     recommendations: List[str]
 
-class User(BaseModel):
-    email: str
-    password: str
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-class PrecedentSearch(BaseModel):
-    query: str
+class UserContract(BaseModel):
+    id: Optional[str]
+    user_id: str
+    title: str
+    content: str
+    risk_score: int
+    analysis: str
+    created_at: Optional[datetime] = None
 
 class Precedent(BaseModel):
     id: int
@@ -66,9 +93,6 @@ class Precedent(BaseModel):
     court: str
     year: int
     relevance: float
-
-class ContractRequest(BaseModel):
-    contract_text: str
 
 
 # Authentication dependency
@@ -249,6 +273,39 @@ async def contract_intelligence_upload(file: UploadFile = File(...)):
     except Exception as e:
         logging.exception("Error analyzing uploaded contract file")
         raise HTTPException(status_code=500, detail=f"Error analyzing contract file: {str(e)}")
+
+# User Profile Endpoints
+@app.get("/api/user/profile", response_model=UserProfile)
+async def get_user_profile(user=Depends(get_current_user)):
+    try:
+        # Fetch from user_profiles table
+        response = supabase.table("user_profiles").select("id,email,name,avatar,created_at").eq("id", user.id).single().execute()
+        if response.data:
+            return response.data
+        # Fallback: return basic info from Supabase user if no profile row
+        return {
+            "id": user.id,
+            "email": user.email,
+            "name": None,
+            "avatar": None,
+            "created_at": user.created_at if hasattr(user, "created_at") else None,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching profile: {str(e)}")
+
+@app.post("/api/user/profile", response_model=UserProfile)
+async def update_user_profile(payload: UserProfile, user=Depends(get_current_user)):
+    try:
+        # Upsert profile (update if exists, insert if not)
+        update_fields = {"name": payload.name, "avatar": payload.avatar}
+        upsert_data = {"id": user.id, "email": user.email, **update_fields}
+        response = supabase.table("user_profiles").upsert(upsert_data, on_conflict="id").execute()
+        if response.data and len(response.data) > 0:
+            return response.data[0]
+        # Fallback: return what we tried to set
+        return {"id": user.id, "email": user.email, **update_fields, "created_at": None}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error updating profile: {str(e)}")
 
 # Run the application
 if __name__ == "__main__":
