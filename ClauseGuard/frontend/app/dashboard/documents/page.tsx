@@ -11,6 +11,8 @@ export default function DocumentsPage() {
 
   useEffect(() => {
     const fetchDocs = async () => {
+      console.log("[DocumentsPage] user:", user);
+      console.log("[DocumentsPage] accessToken:", accessToken);
       if (!user) return;
       setLoading(true);
       setError(null);
@@ -18,10 +20,16 @@ export default function DocumentsPage() {
         const res = await fetch("/api/user/contracts", {
           headers: { Authorization: `Bearer ${accessToken || ""}` },
         });
-        if (!res.ok) throw new Error("Failed to fetch documents");
+        console.log("[DocumentsPage] fetch response status:", res.status);
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("[DocumentsPage] fetch error response:", errorText);
+          throw new Error("Failed to fetch documents: " + errorText);
+        }
         const data = await res.json();
         setDocuments(data || []);
       } catch (e: any) {
+        console.error("[DocumentsPage] fetch exception:", e);
         setError(e.message || "Unknown error");
       } finally {
         setLoading(false);
