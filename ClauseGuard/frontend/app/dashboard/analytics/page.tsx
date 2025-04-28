@@ -1,3 +1,4 @@
+"use client";
 import { BarChart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useUser } from "../../../context/UserContext";
