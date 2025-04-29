@@ -1,0 +1,8 @@
+fastapi==0.110.0
+uvicorn==0.29.0
+python-dotenv==1.0.1
+supabase
+streamlit==1.40.2
+llama-index==0.12.30
+llama-index-llms-google-genai==0.1.9
+llama-cloud==0.1.18

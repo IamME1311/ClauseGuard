@@ -42,6 +42,10 @@ class ClauseGuard_Agent:
         # --- 2. Configure LLM ---
         self.llm = GoogleGenAI(model="models/gemini-2.0-flash-thinking-exp-1219", api_key=self.google_api_key)
         Settings.llm = self.llm
+
+        self.setup_retriever()
+        self.setup_agent()
+        logger.debug("ClauseGuard ready for action!!")
     
     def setup_retriever(self):
         # --- 3. Define LLamaCloud Indices ---
@@ -63,15 +67,18 @@ class ClauseGuard_Agent:
 
 
         # --- 4. Setup Composite Retriever ---
-        self.composite_retriever = LlamaCloudCompositeRetriever(
-            name="IT Law Retriever",
-            project_name=self.project_name,
-            organization_id=self.org_id,
-            create_if_not_exists=True,
-            mode=CompositeRetrievalMode.FULL,
-            rerank_top_n=5, api_key=self.llama_cloud_api_key
-        )
-        logger.debug("Setup complete for composite retriever")
+        try:
+            self.composite_retriever = LlamaCloudCompositeRetriever(
+                name="IT Law Retriever",
+                project_name=self.project_name,
+                organization_id=self.org_id,
+                create_if_not_exists=True,
+                mode=CompositeRetrievalMode.FULL,
+                rerank_top_n=5, api_key=self.llama_cloud_api_key
+            )
+            logger.debug("Setup complete for composite retriever")
+        except Exception as e:
+            logger.exception("Exception occured while setting up Composite Retriever")
         # Add Indices to the retriever
         self.composite_retriever.add_index(
             index_1,
@@ -125,7 +132,7 @@ class ClauseGuard_Agent:
 
 
 
-    async def agent_execute(self, user_query) -> str:
+    def agent_execute(self, user_query:str) -> str:
         try:
             logger.info(f"User query : {user_query}")
             if user_query.lower() == 'quit':

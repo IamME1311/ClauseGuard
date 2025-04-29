@@ -26,10 +26,14 @@ json_formatter = jsonlogger.JsonFormatter(log_format)
 
 console_handler.setFormatter(console_formatter)
 os.makedirs("logs", exist_ok=True)
-file_handler = RotatingFileHandler("logs/agent.log", maxBytes=1_000_000, backupCount=5)
+log_path = os.path.abspath("logs/agent.log")
+file_handler = RotatingFileHandler(log_path, maxBytes=1_000_000, backupCount=5)
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(json_formatter)
 
-if not logger.handlers:
-    logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
+# Clear existing handlers to avoid duplicate logs or conflicts
+if logger.hasHandlers():
+    logger.handlers.clear()
+
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
