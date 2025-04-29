@@ -9,7 +9,8 @@ import uvicorn
 import json
 import asyncio
 from dotenv import load_dotenv
-from agent import analyze_contract_text, legal_research_query
+from .Agent.agent import ClauseGuard_Agent
+from .agent_dummy import analyze_contract_text, analyze_contract_file
 
 # Load environment variables only once
 load_dotenv()
@@ -112,7 +113,7 @@ async def get_current_user(authorization: Optional[str] = None):
 
 # Auth endpoints
 @app.post("/api/auth/signup", response_model=Token)
-async def signup(user: User):
+async def signup(user: User): # TODO : add User datamodel
     try:
         # Call Supabase auth signup
         response = supabase.auth.sign_up({"email": user.email, "password": user.password})
@@ -129,7 +130,7 @@ async def signup(user: User):
         )
 
 @app.post("/api/auth/login", response_model=Token)
-async def login(user: User):
+async def login(user: User): # TODO : add User datamodel
     try:
         # Call Supabase auth login
         response = supabase.auth.sign_in_with_password({"email": user.email, "password": user.password})
@@ -150,12 +151,13 @@ async def login(user: User):
 @app.post("/api/legal-research")
 async def legal_research_api(payload: dict):
     import logging
-    query = payload.get("query", "")
+    query:str = payload.get("query", "")
     logging.info(f"Received legal research request: {query}")
     try:
         if not query:
             raise ValueError("Query is required.")
-        result = await legal_research_query(query)
+        Agent_obj = ClauseGuard_Agent()
+        result = await Agent_obj.agent_execute(query)
         return result
     except Exception as e:
         logging.exception("Error in legal research")
