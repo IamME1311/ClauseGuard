@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 # --- LlamaIndex Core Imports ---
 from llama_index.core import Settings
-from llama_index.core.tools import QueryEngineTool, ToolMetadata
+from llama_index.core.tools import QueryEngineTool, ToolMetadata, FunctionTool
 from llama_index.core.query_engine import RetrieverQueryEngine
 
 # --- LLamaCloud Imports ---
@@ -109,6 +109,27 @@ class ClauseGuard_Agent:
             )
         )
 
+        def fallback_web_search(query: str) -> str:
+            # TODO: Replace this with a real web search API if needed
+            # TODO: add web URLs that contain data that be more in line with user query
+            return (
+                f"Couldn't find a reliable answer from the internal legal documents.\n"
+                f"Here are some external resources you may want to check:\n"
+                f"- https://www.google.com/search?q={query.replace(' ', '+')}\n"
+                f"- https://law.cornell.edu\n"
+                f"- https://www.justia.com\n"
+                f"- https://www.nolo.com/legal-encyclopedia\n"
+            )
+        
+
+        web_search_tool = FunctionTool.from_defaults(
+            fn=fallback_web_search,
+            name="fallback_web_search",
+            description=(
+                "Use this tool when document-based retrieval fails to produce relevant legal information, "
+                "or if you're unsure about the answer. It returns a set of external legal resources or URLs the user can explore."
+            )
+        )
         # --- 6. Define the Agent System Prompt ---
         self.system_prompt = """
         You are an advanced Contract Intelligence Agent and Legal Research Assistant.
@@ -122,12 +143,13 @@ class ClauseGuard_Agent:
         - Searching for relevant statutes, case law, and regulations *within the available document set accessed via the pipeline*.
         - When asked to summarize or analyze a specific contract (e.g., 'this employment contract'), clarify that you need the user to ask specific questions about the contract's content that you can look up using the tool. You cannot analyze external documents directly, only retrieve information from the indexed ones via the pipeline.
         - Use the 'legal_research_retriever' tool whenever you need to fetch information from the document base.
+        - If document retrieval returns no relevant information or you are unsure about the answer, use the 'fallback_web_search' tool to offer external resources or URLs the user can check manually.
         """
 
         # --- 7. Create the FunctionCalling Agent ---
         self.llm_agent = GoogleGenAI(model="models/gemini-2.0-flash-thinking-exp-1219", system_prompt=self.system_prompt, api_key=self.google_api_key)
         self.agent = FunctionCallingAgentWorker.from_tools(
-            [legal_tool], llm=self.llm_agent, verbose=True
+            [legal_tool, web_search_tool], llm=self.llm_agent, verbose=True
         ).as_agent()
 
 
