@@ -148,10 +148,10 @@ class ClauseGuard_Agent:
 
         # --- 7. Create the FunctionCalling Agent ---
         self.llm_agent = GoogleGenAI(model="models/gemini-2.0-flash-thinking-exp-1219", system_prompt=self.system_prompt, api_key=self.google_api_key)
-        self.agent = FunctionCallingAgentWorker.from_tools(
-            [legal_tool, web_search_tool], llm=self.llm_agent, verbose=True
+        self.agent_worker = FunctionCallingAgentWorker.from_tools(
+            [legal_tool], llm=self.llm_agent, verbose=True
         ).as_agent()
-
+        self.agent_runner = AgentRunner(self.agent_worker)
 
 
     def agent_execute(self, user_query:str) -> str:
@@ -159,7 +159,8 @@ class ClauseGuard_Agent:
             logger.info(f"User query : {user_query}")
             if user_query.lower() == 'quit':
                 return "Thanks for using ClauseGuard"
-            response = self.agent.chat(user_query)
+            # response = self.agent_worker.chat(user_query) # for just one reasoning cycle
+            response = self.agent_runner.chat(user_query)
             logger.info(f"Agent Response : {response}")
             return response
         except Exception as e:
