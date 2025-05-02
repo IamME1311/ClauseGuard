@@ -18,7 +18,7 @@ from llama_index.llms.google_genai import GoogleGenAI
 from llama_index.core.agent import FunctionCallingAgentWorker, AgentRunner
 
 # --- Import Logger ---
-from .logger.logger import logger
+from logger.logger import logger
 
 
 class ClauseGuard_Agent:
@@ -143,14 +143,14 @@ class ClauseGuard_Agent:
         - Searching for relevant statutes, case law, and regulations *within the available document set accessed via the pipeline*.
         - When asked to summarize or analyze a specific contract (e.g., 'this employment contract'), clarify that you need the user to ask specific questions about the contract's content that you can look up using the tool. You cannot analyze external documents directly, only retrieve information from the indexed ones via the pipeline.
         - Use the 'legal_research_retriever' tool whenever you need to fetch information from the document base.
-        - If document retrieval returns no relevant information or you are unsure about the answer, use the 'fallback_web_search' tool to offer external resources or URLs the user can check manually.
+        - If document retrieval returns no relevant information or you are unsure about the answer, you must automatically use the 'fallback_web_search' tool,  to offer external resources or URLs the user can check manually.
         """
-
+# (without explicit instruction form user)
         # --- 7. Create the FunctionCalling Agent ---
-        self.llm_agent = GoogleGenAI(model="models/gemini-2.0-flash-thinking-exp-1219", system_prompt=self.system_prompt, api_key=self.google_api_key)
+        self.llm_agent = GoogleGenAI(model="models/gemini-2.0-flash-thinking-exp-1219", system_prompt=self.system_prompt, api_key=self.google_api_key, temperature=0.4)
         self.agent_worker = FunctionCallingAgentWorker.from_tools(
-            [legal_tool], llm=self.llm_agent, verbose=True
-        ).as_agent()
+            [legal_tool, web_search_tool], llm=self.llm_agent, verbose=True
+        )
         self.agent_runner = AgentRunner(self.agent_worker)
 
 
@@ -166,3 +166,25 @@ class ClauseGuard_Agent:
         except Exception as e:
             logger.exception(f"Detailed error: {e}") # Log traceback for debugging
         logger.info("Exited the agent")
+
+
+if __name__ == "__main__":
+    pass
+    # TESTING CODE
+    # prompt = "What are the compliance obligations under CCPA and HIPAA for SaaS platforms that store both personal and healthcare data on third-party cloud providers?"
+    # # prompt = "tell me about IPC section 400"
+    # agent_obj = ClauseGuard_Agent()
+    # while True:
+    #     user_query = input("Enter Your query : ")
+    #     try:
+    #         logger.info(f"User query : {user_query}")
+    #         if user_query.lower() == 'quit':
+    #             print("Thanks for using ClauseGuard")
+    #             break
+    #         # response = self.agent_worker.chat(user_query) # for just one reasoning cycle
+    #         response = agent_obj.agent_runner.chat(user_query)
+    #         logger.info(f"Agent Response : {response}")
+    #         # return response
+    #     except Exception as e:
+    #         logger.exception(f"Detailed error: {e}") # Log traceback for debugging
+    #     logger.info("Exited the agent")
